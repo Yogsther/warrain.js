@@ -24,6 +24,9 @@ Store all textures in this array as objects.
 var textures = [{
   name: "player_test",
   src: "spr/player_def_test.png"
+}, {
+  name: "tree_test",
+  src: "spr/tree_test.png"
 }];
 
 window.onload = new function(){
@@ -39,7 +42,19 @@ var player_x = canvas.width / 2;
 var player_y = canvas.height / 2;
 var player_speed = 2;
 
-
+//TODO REMOVE THIS, JUST A TEST
+var trees = [];
+treeSpawn();
+function treeSpawn(){
+  for(var i = 0; i < 100; i++){
+    // Spawn 100 trees
+    trees.push({
+      x: Math.floor(Math.random()*1000),
+      y: Math.floor(Math.random()*1000),
+      texture: "tree_test"
+    });
+  }
+}
 
 
 /*
@@ -86,10 +101,10 @@ function inputAction(){
   if(keysDown.indexOf(68) != -1) player_x += player_speed; // D
 
   var cameraSpeed = 2;
-  var cameraLimit_x = 250;
-  var cameraLimit_y = 100;
+  var cameraLimit_x = 150;
+  var cameraLimit_y = 80;
 
-
+  console.log(player_y - camera.y);
   // Camera y
   if(player_y - camera.y > cameraLimit_y){
       camera.y += cameraSpeed;
@@ -127,12 +142,14 @@ async function heartbeat(){
       texture: "player_test"
     });
 
-    renderArray.push({
-      x: 10,
-      y: 10,
-      texture: "player_test"
-    });
-
+    // TODO REMOVE ONLY TEST
+    for(var i = 0; i < trees.length; i++){
+      renderArray.push({
+        x: trees[i].x,
+        y: trees[i].y,
+        texture: trees[i].texture
+      });
+    }
 
 
 
@@ -147,11 +164,10 @@ async function heartbeat(){
     for(var i = 0; i < renderArray.length; i++){
       var x = renderArray[i].x - camera.x + canvas.width / 2;
       var y = renderArray[i].y - camera.y + canvas.height / 2;
-
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
     }
 
-    await sleep(0,0166); // Wait for for 1/60 of a second
+    await sleep(0,032); // Wait for for 1/60 of a second
     heartbeat(); // Run heartbeat again
 
 }
