@@ -1,0 +1,17 @@
+
+/* Main canvas */
+#canvas{
+  top: 3em;
+  box-shadow: 0px 0px 5px black;
+  position: relative;
+  margin: 0 auto;
+  display: block;
+  background: white;
+  border-radius: 5px;
+}
+
+/* Default look */
+body{
+  background: #111;
+  /* TODO add default font! */
+}
