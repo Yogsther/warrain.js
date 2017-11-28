@@ -39,6 +39,9 @@ var textures = [{
 }, {
   name: "waypoint",
   src: "spr/waypoint.png"
+}, {
+  name: "bush",
+  src: "spr/bush.png"
 }];
 
 window.onload = new function(){
@@ -55,19 +58,6 @@ var player_x = canvas.width / 2;
 var player_y = canvas.height / 2;
 var player_speed = 1;
 
-//TODO REMOVE THIS, JUST A TEST
-var trees = [];
-treeSpawn();
-function treeSpawn(){
-  for(var i = 0; i < 100; i++){
-    // Spawn 100 trees
-    trees.push({
-      x: Math.floor(Math.random()*1000),
-      y: Math.floor(Math.random()*1000),
-      texture: "tree_test"
-    });
-  }
-}
 
 
 /*
@@ -250,15 +240,6 @@ async function heartbeat(){
       y: player_y,
       texture: "player_test"
     });
-
-    // TODO REMOVE ONLY TEST
-    for(var i = 0; i < trees.length; i++){
-      renderArray.push({
-        x: trees[i].x,
-        y: trees[i].y,
-        texture: trees[i].texture
-      });
-    }
 
     // Render waypoint, this needs to be rendered last since it's a part of the GUI.
     if(drawWaypoint.active){
