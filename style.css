@@ -14,5 +14,32 @@
 /* Default look */
 body{
   background: #111;
-  /* TODO add default font! */
+  font-family: 'Roboto', sans-serif;
+}
+
+button{
+    font-family: 'Roboto', sans-serif;
+}
+
+
+
+
+
+/* Debug and Level editor */
+
+#debug_div{
+    position: relative;
+    top: 70px;
+    left: 250px;
+}
+
+
+#debug_button{
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#savefile{
+
 }

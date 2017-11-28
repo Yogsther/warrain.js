@@ -4,13 +4,20 @@
     <meta charset="utf-8">
     <title>War Rain</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script> <!-- import jquery -->
+      <!-- Todo socket.io -->
   </head>
   <body>
 
-    <!-- Main canvas -->
-    <canvas id="canvas" />
+    <!-- Main canvas and Game -->
+    <canvas id="canvas"></canvas>
     <script src="warrain.js"></script>
-
+    
+    <!-- Debug -->  
+    <div id="debug_div">
+    <button onclick="window.location.href='leveleditor.html'" id="debug_button">Debug: Level editor</button>
+    </div>
+      
   </body>
 </html>

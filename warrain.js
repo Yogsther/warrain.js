@@ -53,7 +53,7 @@ window.onload = new function(){
 
 var player_x = canvas.width / 2;
 var player_y = canvas.height / 2;
-var player_speed = 2;
+var player_speed = 1;
 
 //TODO REMOVE THIS, JUST A TEST
 var trees = [];
@@ -75,8 +75,8 @@ Main game engine ☢
 */
 
 var camera = {
-  x: 0,
-  y: 0
+  x: player_x,
+  y: player_y
 }
 
 heartbeat(); // Start heartbeat / render tick
