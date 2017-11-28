@@ -197,13 +197,26 @@ function moveToWaypoint(){
   Straight forward pathfinding, and this may be enough. I don't know - I guess movement will be
   a bit more involved. We can't do pathfinding until we have setup collisisons.
   */
-  if(player_x < drawWaypoint.x) player_x++;
-  if(player_x > drawWaypoint.x) player_x -= 1;
+  var speed_x = player_speed;
+  var speed_y = Math.abs((drawWaypoint.y - player_y) / (drawWaypoint.x - player_x)) * player_speed;
+  if(speed_y > player_speed) {
+    speed_x = (player_speed / speed_y);
+    speed_y = player_speed;
+  }
+  if(drawWaypoint.x > player_x) {
+    player_x += speed_x;
+  }
+  if(drawWaypoint.y > player_y) {
+    player_y += speed_y;
+  }
+  if(drawWaypoint.y < player_y) {
+    player_y -= speed_y;
+  }
+  if(drawWaypoint.x < player_x) {
+    player_x -= speed_x;
+  }
 
-  if(player_y < drawWaypoint.y) player_y++;
-  if(player_y > drawWaypoint.y) player_y -= 1;
-
-  if(player_x == drawWaypoint.x && player_y == drawWaypoint.y){
+  if(Math.abs(player_x - drawWaypoint.x) < player_speed && Math.abs(player_y - drawWaypoint.y) < player_speed) {
     drawWaypoint.active = false;
   }
 }
