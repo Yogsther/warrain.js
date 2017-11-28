@@ -2,8 +2,8 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
-canvas.width = 640;
-canvas.height = 360;
+canvas.width = window.screen.availWidth * 0.7;
+canvas.height = canvas.width * 0.56;
 
 /*
 This is the array where all objects to render will be stored. Everything in this
@@ -14,6 +14,7 @@ Structure for a render object is:
   y: 0,
   texture: texture_name }
 */
+
 
 var renderArray = [];
 var keysDown = []; // In this array, all the keycodes to the keys currently pressed down.
@@ -27,6 +28,9 @@ var textures = [{
 }, {
   name: "tree_test",
   src: "spr/tree_test.png"
+}, {
+  name: "waypoint",
+  src: "spr/waypoint.png"
 }];
 
 window.onload = new function(){
@@ -93,13 +97,10 @@ function inputHandler(){
   });
 }
 
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-      x: evt.clientX - rect.left,
-      y: evt.clientY - rect.top
-  };
-}
+
+
+var mousedown = false;
+var mousePos;
 
 function mouseClickHandler(){
 
@@ -109,21 +110,45 @@ function mouseClickHandler(){
     y: 0
   }; // The X that the player will go to.
 
-  canvas.addEventListener("click", function(event){
-    var mousePos = getMousePos(canvas, event);
-    /*
-      When mouse is clicked on the canvas. (Click to move)
-    */
-    drawWaypoint.active = true;
-    drawWaypoint.x = mousePos.x;
-    drawWaypoint.y = mousePos.y;
+
+  canvas.addEventListener("mousemove", function(event){
+    mousePos = getMousePos(canvas, event); // Update mousePos every time the mouse moves.
   });
+
+  canvas.addEventListener("click", function(event){
+    addWaypoint(mousePos.x, mousePos.y); // When mouse is clicked on the canvas. (Click to move)
+  });
+
+  // Mouse hold, writes to boolean when mouse is held down.
+  $(canvas).on('mousedown mouseup', function mouseState(e) {
+    if (e.type == "mousedown") {
+      mousedown = true;
+    } else {
+      mousedown = false;
+      }
+    });
+  }
+
+function getMousePos(canvas, evt) {
+  // Don't use this function - It's only a complimentary to the mousemove listener.
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+  };
+}
+// Add a waypoint that the player will walk towards
+function addWaypoint(x, y){
+  drawWaypoint.active = true;
+  drawWaypoint.x = x + camera.x - canvas.width/2;
+  drawWaypoint.y = y + camera.y - canvas.height/2;
 }
 
 
 // This function is to define what to do when keys are pressed and what to do.
 function inputAction(){
 
+  // TODO Remove or Tweak thsese. Since walking with keys is faster and unbalanced!
   if(keysDown.indexOf(87) != -1) player_y += -player_speed; // W
   if(keysDown.indexOf(83) != -1) player_y += player_speed; // S
   if(keysDown.indexOf(65) != -1) player_x += -player_speed; // A
@@ -134,6 +159,11 @@ function inputAction(){
   var cameraLimit_y = 80;
 
 
+
+  /*
+    Camera follow
+  */
+
   // Camera y
   if(player_y - camera.y > cameraLimit_y){
       camera.y += cameraSpeed;
@@ -141,7 +171,7 @@ function inputAction(){
   if(player_y - camera.y < (cameraLimit_y*-1)){
       camera.y -= cameraSpeed;
   }
-
+  // Camera x
   if(player_x - camera.x > cameraLimit_x){
       camera.x += cameraSpeed;
   }
@@ -150,6 +180,25 @@ function inputAction(){
   }
 
 
+}
+
+
+function moveToWaypoint(){
+  // TODO Pathfinding
+  /*
+  This code will just correct the poistion of the player to the position of the waypoint.
+  Straight forward pathfinding, and this may be enough. I don't know - I guess movement will be
+  a bit more involved. We can't do pathfinding until we have setup collisisons.
+  */
+  if(player_x < drawWaypoint.x) player_x++;
+  if(player_x > drawWaypoint.x) player_x -= 1;
+
+  if(player_y < drawWaypoint.y) player_y++;
+  if(player_y > drawWaypoint.y) player_y -= 1;
+
+  if(player_x == drawWaypoint.x && player_y == drawWaypoint.y){
+    drawWaypoint.active = false;
+  }
 }
 
 /*
@@ -161,6 +210,17 @@ async function heartbeat(){
     // Clear render renderArray
     renderArray = [];
     inputAction();
+
+    /*
+      Movement - Walk to point
+    */
+      if(drawWaypoint.active){
+        moveToWaypoint();
+      }
+
+      if(mousedown){
+          addWaypoint(mousePos.x, mousePos.y);
+      }
 
     // Push texutres here.
     // This will be done from a server later when we get online boiiii
@@ -180,6 +240,15 @@ async function heartbeat(){
       });
     }
 
+    // Render waypoint, this needs to be rendered last since it's a part of the GUI.
+    if(drawWaypoint.active){
+      //ctx.drawImage(waypoint, drawWaypoint.x, drawWaypoint.y);
+      renderArray.push({
+        x: drawWaypoint.x,
+        y: drawWaypoint.y,
+        texture: "waypoint"
+      });
+    }
 
 
 
@@ -196,16 +265,9 @@ async function heartbeat(){
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
     }
 
-    /*
-      Render GUI (This is done last.)
-    */
 
-    // Render waypoint, this needs to be rendered last since it's a part of the GUI.
-    if(drawWaypoint.active){
-      // TODO Replace this with an actual texture.
-      ctx.fillStyle = "red";
-      ctx.fillRect((drawWaypoint.x - (camera.x + canvas.width / 2)), (drawWaypoint.y - (camera.y + canvas.height / 2)), 10, 10);
-    }
+
+
 
 
     await sleep(0,032); // Wait for for 1/60 of a second
