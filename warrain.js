@@ -140,8 +140,8 @@ function getMousePos(canvas, evt) {
 // Add a waypoint that the player will walk towards
 function addWaypoint(x, y){
   drawWaypoint.active = true;
-  drawWaypoint.x = x + camera.x - canvas.width/2;
-  drawWaypoint.y = y + camera.y - canvas.height/2;
+  drawWaypoint.x = x + camera.x - canvas.width / 2;
+  drawWaypoint.y = y + camera.y - canvas.height / 2;
 }
 
 
