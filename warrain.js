@@ -1,19 +1,27 @@
+/*
+  Warrain.js - https://github.com/Yogsther/warrain.js
+
+  Guide to understanding the engine
+
+  Input: Look for the array keysDown, in there all currently pressed keys will be stored!
+
+  Render: To render something, it has to be in the "renderArray"
+  to add it, just use renderArray.push({"Your object"});
+  It has to have x: and y: coordiantes aswell as a texture varaible.
+
+  Structure for a render object is:
+  { x: 0,
+    y: 0,
+    texture: texture_name }
+
+*/
+
 // Setup canvas
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
 canvas.width = window.screen.availWidth * 0.7;
 canvas.height = canvas.width * 0.56;
-
-/*
-This is the array where all objects to render will be stored. Everything in this
-array will be rendered in heartbeat()
-
-Structure for a render object is:
-{ x: 0,
-  y: 0,
-  texture: texture_name }
-*/
 
 
 var renderArray = [];
@@ -98,7 +106,6 @@ function inputHandler(){
 }
 
 
-
 var mousedown = false;
 var mousePos;
 
@@ -140,8 +147,8 @@ function getMousePos(canvas, evt) {
 // Add a waypoint that the player will walk towards
 function addWaypoint(x, y){
   drawWaypoint.active = true;
-  drawWaypoint.x = x + camera.x - canvas.width / 2;
-  drawWaypoint.y = y + camera.y - canvas.height / 2;
+  drawWaypoint.x = Math.round(x + camera.x - canvas.width / 2);
+  drawWaypoint.y = Math.round(y + camera.y - canvas.height / 2);
 }
 
 
@@ -260,7 +267,7 @@ async function heartbeat(){
 
     // Render everything in the renderArray
     for(var i = 0; i < renderArray.length; i++){
-      var x = renderArray[i].x - camera.x + canvas.width / 2;
+      var x = renderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
       var y = renderArray[i].y - camera.y + canvas.height / 2;
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
     }
