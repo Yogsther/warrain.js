@@ -16,7 +16,7 @@ Structure for a render object is:
 */
 
 var renderArray = [];
-var keysDown = [];
+var keysDown = []; // In this array, all the keycodes to the keys currently pressed down.
 
 /*
 Store all textures in this array as objects.
@@ -33,6 +33,7 @@ window.onload = new function(){
   // Run onload
   loadTextures(); // Load textures
   inputHandler(); // Initiate inputHandler
+  mouseClickHandler(); // Initate mouseHandler
 }
 
 // Push texture positions here!
@@ -92,6 +93,34 @@ function inputHandler(){
   });
 }
 
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+  };
+}
+
+function mouseClickHandler(){
+
+  window.drawWaypoint = {
+    active: false,
+    x: 0,
+    y: 0
+  }; // The X that the player will go to.
+
+  canvas.addEventListener("click", function(event){
+    var mousePos = getMousePos(canvas, event);
+    /*
+      When mouse is clicked on the canvas. (Click to move)
+    */
+    drawWaypoint.active = true;
+    drawWaypoint.x = mousePos.x;
+    drawWaypoint.y = mousePos.y;
+  });
+}
+
+
 // This function is to define what to do when keys are pressed and what to do.
 function inputAction(){
 
@@ -104,7 +133,7 @@ function inputAction(){
   var cameraLimit_x = 150;
   var cameraLimit_y = 80;
 
-  console.log(player_y - camera.y);
+
   // Camera y
   if(player_y - camera.y > cameraLimit_y){
       camera.y += cameraSpeed;
@@ -166,6 +195,18 @@ async function heartbeat(){
       var y = renderArray[i].y - camera.y + canvas.height / 2;
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
     }
+
+    /*
+      Render GUI (This is done last.)
+    */
+
+    // Render waypoint, this needs to be rendered last since it's a part of the GUI.
+    if(drawWaypoint.active){
+      // TODO Replace this with an actual texture.
+      ctx.fillStyle = "red";
+      ctx.fillRect((drawWaypoint.x - (camera.x + canvas.width / 2)), (drawWaypoint.y - (camera.y + canvas.height / 2)), 10, 10);
+    }
+
 
     await sleep(0,032); // Wait for for 1/60 of a second
     heartbeat(); // Run heartbeat again
