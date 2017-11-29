@@ -24,6 +24,10 @@ canvas.width = window.screen.availWidth * 0.7;
 canvas.height = canvas.width * 0.56;
 
 
+// Map array from map.js
+var map = mapRaw;
+
+
 var renderArray = [];
 var keysDown = []; // In this array, all the keycodes to the keys currently pressed down.
 
@@ -258,6 +262,13 @@ async function heartbeat(){
     */
     ctx.fillStyle = "#48bf52"; // TODO may want to change this color.
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Render map
+    for(var i = 0; i < map.length; i++){
+      var x = map[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
+      var y = map[i].y - camera.y + canvas.height / 2;
+      eval("ctx.drawImage(" + map[i].texture + ", " + x + ", " + y + ");");
+    }
 
     // Render everything in the renderArray
     for(var i = 0; i < renderArray.length; i++){

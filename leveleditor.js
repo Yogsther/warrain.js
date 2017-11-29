@@ -27,7 +27,7 @@ window.onload = function(){
     loadTextures();
 }
 
-var map = [];
+var map = mapRaw;
 
 function loadTextures(){
     for(var i = 0; i < textures.length; i++){
@@ -62,8 +62,15 @@ canvas.addEventListener("click", function(event){
         texture: currentTexture
     });
     
-    document.getElementById("dropbox").innerHTML += '<span class="drop">' + currentTexture + ' | ' + Math.round(mousePos.x + camera.x - canvas.width / 2) + ', ' + Math.round(mousePos.y + camera.y - canvas.height / 2) + ' <a onclick="remove(' + Math.round(mousePos.x + camera.x - canvas.width / 2) + ',' + Math.round(mousePos.y + camera.y - canvas.height / 2) + ')" title="DELETE THIS" style="color: red; cursor:pointer;">X</a></span>';
+    loadMapIndex();
 });
+
+function loadMapIndex(){
+    document.getElementById("dropbox").innerHTML = "";  
+    for(var i = map.length - 1; i > -1; i -= 1){
+        document.getElementById("dropbox").innerHTML += '<span class="drop">' + map[i].texture + ' | ' + map[i].x + ', ' + map[i].y + ' <a onclick="remove(' + map[i].x + ',' + map[i].y + ')" title="DELETE THIS" style="color: red; cursor:pointer;">X</a></span>';
+    }
+}
 
 function remove(x,y){
     var notfound = true;
@@ -80,15 +87,9 @@ function remove(x,y){
         }
     }
    map.splice(i, 1);
-        try{
-            document.getElementById("dropbox").innerHTML = "";  
-        } catch(e){
-            
-        }
+    loadMapIndex();
         
-    for(var i = 0; i < map.length; i++){
-        document.getElementById("dropbox").innerHTML += '<span class="drop">' + map[i].texture + ' | ' + map[i].x + ', ' + map[i].y + ' <a onclick="remove(' + map[i].x + ',' + map[i].y + ')" title="DELETE THIS" style="color: red; cursor:pointer;">X</a></span>';
-    }   
+       
 }
 
 var currentTexture = textures[0].name;
@@ -96,6 +97,15 @@ function chooseTexture(textureName){
     currentTexture = textureName;
 }
 var keysDown = [];
+
+
+
+var camera = {
+    x: 0,
+    y: 0
+};
+
+
 
 
 heartbeat();
@@ -114,13 +124,6 @@ function inputHandler(){
     keysDown.splice(keysDown.indexOf(event.keyCode), 1);
   });
 }
-
-var camera = {
-    x: 0,
-    y: 0
-};
-
-
 
 async function heartbeat(){
 
@@ -165,6 +168,7 @@ async function heartbeat(){
       var x = renderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
       var y = renderArray[i].y - camera.y + canvas.height / 2;
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
+        
     }
 
     try{
@@ -187,3 +191,29 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
+function exportLevel(){
+    copyToClipboard("/* This is the only string that should be present in map.js! */ \nvar mapRaw = " + JSON.stringify(map) + ";");
+}
+
+function copyToClipboard(text) {
+    if (window.clipboardData && window.clipboardData.setData) {
+        // IE specific code path to prevent textarea being shown while dialog is visible.
+        return clipboardData.setData("Text", text); 
+
+    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+}

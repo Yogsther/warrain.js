@@ -24,9 +24,6 @@ button{
 }
 
 
-
-
-
 /* Debug and Level editor */
 
 .debugCanvas{
@@ -38,7 +35,7 @@ button{
     background: black;
     height: 500px;
     float: right;
-    top: -705px;
+    top: -525px;
     margin: 0 auto;
     left: 20px;
     border-radius: 5px;
@@ -83,7 +80,7 @@ button{
    display: block;
    width: 250px;
    font-size: 19px;
-   top: -200px;
+   top: 10px;
    left: 250px;
    position: relative;
 }

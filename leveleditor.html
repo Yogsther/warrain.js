@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script src="jq.js" type="text/javascript"></script>
+    <script src="map.js"></script> <!-- Import Map -->
   </head>
   <body>
 
@@ -16,16 +17,13 @@
     
       <div id="debug_div">
         <button onclick="window.location.href='index.html'" id="debug_button">Back to game</button>
-        <input placeholder="Save file (map array)" id="savefile">
-        <button onclick="" id="debug_button">Load save</button>
+        <button onclick="exportLevel();" id="debug_button">Copy map to clipboard</button>
       </div>
       
       <!-- This is the box where all new objects are shown. -->
          <span id="coordinates">Coordinates! :)</span>
       <div id="dropbox">
-          
-
-          
+                  
 
       </div>
       </div>
