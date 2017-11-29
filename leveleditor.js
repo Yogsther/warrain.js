@@ -41,7 +41,7 @@ function loadTextures(){
 
  canvas.addEventListener("mousemove", function(event){
     mousePos = getMousePos(canvas, event); // Update mousePos every time the mouse moves.
-    document.getElementById("coordinates").innerHTML = "x: " + Math.round(mousePos.x) + " y: " + Math.round(mousePos.y);
+    document.getElementById("coordinates").innerHTML = "x: " + Math.round(mousePos.x + camera.x - canvas.width / 2) + " y: " + Math.round(mousePos.y + camera.y - canvas.height / 2);
 });
 
 

@@ -1,5 +1,6 @@
 /*
   Warrain.js - https://github.com/Yogsther/warrain.js
+  Tab spaces: 2
 
   Guide to understanding the engine
 
@@ -58,8 +59,8 @@ window.onload = new function(){
 // Push texture positions here!
 // Later this will be pushed from the server.
 
-var player_x = canvas.width / 2;
-var player_y = canvas.height / 2;
+var player_x = 0;
+var player_y = 0;
 var player_speed = 2;
 
 
@@ -152,18 +153,20 @@ function addWaypoint(x, y){
 
 // This function is to define what to do when keys are pressed and what to do.
 function inputAction(){
+    
+  
+  document.getElementById("coordinates_index").innerHTML = "x: " + Math.round(player_x) + " y: " + Math.round(player_y); //Draw coordiantes
+  
 
   // TODO Remove or Tweak thsese. Since walking with keys is faster and unbalanced!
   if(keysDown.indexOf(87) != -1) player_y += -player_speed; // W
   if(keysDown.indexOf(83) != -1) player_y += player_speed; // S
   if(keysDown.indexOf(65) != -1) player_x += -player_speed; // A
   if(keysDown.indexOf(68) != -1) player_x += player_speed; // D
-
+  
   var cameraSpeed = 2;
   var cameraLimit_x = 150;
   var cameraLimit_y = 80;
-
-
 
   /*
     Camera follow
@@ -223,7 +226,7 @@ function moveToWaypoint(){
 Main heartbeat or render tick - This will run constanly, 60 times a second while
 connected to the server and is essential!
 */
-async function heartbeat(){
+function heartbeat(){
 
     // Clear render renderArray
     renderArray = [];
@@ -293,12 +296,5 @@ async function heartbeat(){
     }
     
     
-
     requestAnimationFrame(heartbeat); // Run this 60 times a second.
-
-}
-
-// Sleep function, stolen from Overstacked
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
