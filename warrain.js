@@ -60,7 +60,7 @@ window.onload = new function(){
 
 var player_x = canvas.width / 2;
 var player_y = canvas.height / 2;
-var player_speed = 1;
+var player_speed = 2;
 
 
 
@@ -72,6 +72,10 @@ var camera = {
   x: player_x,
   y: player_y
 }
+
+// Variables for getting the fps
+var lastFpsCheck = 0;
+var fps = 0;
 
 heartbeat(); // Start heartbeat / render tick
 
@@ -141,8 +145,8 @@ function getMousePos(canvas, evt) {
 // Add a waypoint that the player will walk towards
 function addWaypoint(x, y){
   drawWaypoint.active = true;
-  drawWaypoint.x = Math.round(x + camera.x - canvas.width / 2);
-  drawWaypoint.y = Math.round(y + camera.y - canvas.height / 2);
+  drawWaypoint.x = Math.round(x + camera.x - canvas.width / 2) - 15;
+  drawWaypoint.y = Math.round(y + camera.y - canvas.height / 2) - 15;
 }
 
 
@@ -255,7 +259,7 @@ async function heartbeat(){
       });
     }
 
-
+    
 
     /* Render part
     Clear canvas for new rendered
@@ -277,13 +281,20 @@ async function heartbeat(){
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
     }
 
+    
+    fps++; // Increese fps counter
+    
+    var now = Date.now(); // Current time in millis
+    if((now - lastFpsCheck) > 1000){
+        // Check the fps every second
+        document.getElementById("fps").innerHTML = (fps) + " fps"; // Print out fps
+        lastFpsCheck = now; // Log last time checked
+        fps = 0; // Reset fps
+    }
+    
+    
 
-
-
-
-
-    await sleep(0,032); // Wait for for 1/60 of a second
-    heartbeat(); // Run heartbeat again
+    requestAnimationFrame(heartbeat); // Run this 60 times a second.
 
 }
 
