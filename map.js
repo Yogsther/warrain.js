@@ -1,2 +1,2 @@
-/* This is the only string that should be present in map.js! */ 
-var mapRaw = [{"x":-256,"y":-112,"texture":"player_test"},{"x":-241,"y":-29,"texture":"player_test"}];
+/* This is the only string that should be present in map.js! */
+var mapRaw = [{"x":-256,"y":-112,"texture":"player_test"},{"x":-241,"y":-29,"texture":"player_test"},{"x":-36,"y":-77,"texture":"player_test"},{"x":109,"y":85,"texture":"player_test"},{"x":-75,"y":49,"texture":"waypoint"},{"x":135,"y":-66,"texture":"waypoint"},{"x":294,"y":368,"texture":"waypoint"},{"x":133,"y":370,"texture":"waypoint"},{"x":87,"y":299,"texture":"waypoint"},{"x":-425,"y":-83,"texture":"bush"},{"x":-352,"y":3,"texture":"bush"},{"x":-453,"y":51,"texture":"bush"},{"x":-300,"y":138,"texture":"bush"},{"x":-103,"y":99,"texture":"bush"},{"x":-37,"y":-155,"texture":"bush"},{"x":128,"y":-157,"texture":"bush"}];

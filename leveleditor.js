@@ -23,18 +23,17 @@ var ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 500;
 
-window.onload = function(){
-    loadTextures();
-}
+
 
 var map = mapRaw;
+loadTextures();
 
 function loadTextures(){
     for(var i = 0; i < textures.length; i++){
       // Run functions as strings to define textures.
       eval("window." + textures[i].name + " = new Image;");
       eval(textures[i].name + ".src = '" + textures[i].src + "';");
-        
+
         document.getElementById("debug_div").innerHTML += "<button style='height: 50px; width: 50px; position: relative; background-image: url(" + textures[i].src + ")' id='" + textures[i].name + "' title='" + textures[i].name + "' onclick='chooseTexture(this.id)'></button>";
     }
 }
@@ -61,12 +60,12 @@ canvas.addEventListener("click", function(event){
         y: Math.round(mousePos.y + camera.y - canvas.height / 2),
         texture: currentTexture
     });
-    
+
     loadMapIndex();
 });
 
 function loadMapIndex(){
-    document.getElementById("dropbox").innerHTML = "";  
+    document.getElementById("dropbox").innerHTML = "";
     for(var i = map.length - 1; i > -1; i -= 1){
         document.getElementById("dropbox").innerHTML += '<span class="drop">' + map[i].texture + ' | ' + map[i].x + ', ' + map[i].y + ' <a onclick="remove(' + map[i].x + ',' + map[i].y + ')" title="DELETE THIS" style="color: red; cursor:pointer;">X</a></span>';
     }
@@ -88,8 +87,8 @@ function remove(x,y){
     }
    map.splice(i, 1);
     loadMapIndex();
-        
-       
+
+
 }
 
 var currentTexture = textures[0].name;
@@ -129,13 +128,13 @@ async function heartbeat(){
 
     // Clear render renderArray
     renderArray = [];
-    
-    
+
+
     if(keysDown.indexOf(87) != -1) camera.y += -1;   // W
     if(keysDown.indexOf(83) != -1) camera.y += 1;    // S
     if(keysDown.indexOf(65) != -1) camera.x += -1;   // A
     if(keysDown.indexOf(68) != -1) camera.x += 1;    // D
-    
+
         // Go faster when holding shift.
     if(keysDown.indexOf(16) != -1){
         if(keysDown.indexOf(87) != -1) camera.y += -1;   // W
@@ -145,9 +144,9 @@ async function heartbeat(){
     }
 
 
- 
-   
-   
+
+
+
     // Push texutres here.
     // This will be done from a server later when we get online boiiii
     // TODO loading loop for online
@@ -161,14 +160,14 @@ async function heartbeat(){
     */
     ctx.fillStyle = "#48bf52"; // TODO may want to change this color.
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     ctx.globalAlpha = 1;
     // Render everything in the renderArray
     for(var i = 0; i < renderArray.length; i++){
       var x = renderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
       var y = renderArray[i].y - camera.y + canvas.height / 2;
       eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
-        
+
     }
 
     try{
@@ -176,7 +175,7 @@ async function heartbeat(){
     ctx.globalAlpha = 0.5;
     ctx.drawImage(eval(currentTexture), mousePos.x, mousePos.y);
     } catch(e){
-        
+
     }
 
 
@@ -199,7 +198,7 @@ function exportLevel(){
 function copyToClipboard(text) {
     if (window.clipboardData && window.clipboardData.setData) {
         // IE specific code path to prevent textarea being shown while dialog is visible.
-        return clipboardData.setData("Text", text); 
+        return clipboardData.setData("Text", text);
 
     } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
         var textarea = document.createElement("textarea");
