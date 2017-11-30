@@ -13,8 +13,15 @@
   Structure for a render object is:
   { x: 0,
     y: 0,
-    texture: texture_name }
-
+    texture: texture_name,
+    type: "player", "npc", "background", "object" or "block"
+  }
+    
+    player: player controlled by a human
+    npc: monster or friendly characters scattered around the world.
+    background: will render in the background, pure texture.
+    object: something that the player can walk behind, example a tree. No collision
+    block: full collision, players cant walk across it.
 */
 
 // Setup canvas
@@ -28,12 +35,14 @@ canvas.height = canvas.width * 0.56;
 // Map array from map.js
 var map = mapRaw;
 
+var viewport; // This is the current viewport, depending on camera location. This is used to know what to render, and not render objects outside of the viewport.
+
 
 var renderArray = [];
 var keysDown = []; // In this array, all the keycodes to the keys currently pressed down.
 
 /*
-Store all textures in this array as objects.
+Store all textures in this array as objects.y
 */
 var textures = [{
   name: "player_test",
@@ -226,11 +235,19 @@ function moveToWaypoint(){
 Main heartbeat or render tick - This will run constanly, 60 times a second while
 connected to the server and is essential!
 */
-function heartbeat(){
 
+function heartbeat(){
+    
     // Clear render renderArray
     renderArray = [];
     inputAction();
+    
+    viewport = {
+        x0: camera.x + canvas.width / 2 - canvas.width - 100,
+        x1: camera.x + canvas.width / 2 + 100,
+        y0: camera.y + canvas.height / 2 - canvas.height - 100,
+        y1: camera.y + canvas.height / 2 + 100 
+    };
 
     /*
       Movement - Walk to point
@@ -249,7 +266,8 @@ function heartbeat(){
     renderArray.push({
       x: player_x,
       y: player_y,
-      texture: "player_test"
+      texture: "player_test",
+      type: "player"
     });
 
     // Render waypoint, this needs to be rendered last since it's a part of the GUI.
@@ -270,18 +288,34 @@ function heartbeat(){
     ctx.fillStyle = "#48bf52"; // TODO may want to change this color.
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Render map
-    for(var i = 0; i < map.length; i++){
-      var x = map[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
-      var y = map[i].y - camera.y + canvas.height / 2;
-      eval("ctx.drawImage(" + map[i].texture + ", " + x + ", " + y + ");");
-    }
 
-    // Render everything in the renderArray
+    // Save the map that is visible in the viewport.
+    var tempRenderArray = [];
+    for(var i = 0; i < map.length; i++){
+      var renderArr = map;
+      if(renderArr[i].x < viewport.x1 && renderArr[i].y < viewport.y1 && renderArr[i].x > viewport.x0 && renderArr[i].y > viewport.y0){
+        // Item is in the viewport
+        tempRenderArray.push(renderArr[i]);
+      }
+    }
+    // Store items, characters and other objects from the renderArray, all temporary items in the world.
     for(var i = 0; i < renderArray.length; i++){
-      var x = renderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
-      var y = renderArray[i].y - camera.y + canvas.height / 2;
-      eval("ctx.drawImage(" + renderArray[i].texture + ", " + x + ", " + y + ");");
+      var renderArr = renderArray;
+      if(renderArr[i].x < viewport.x1 && renderArray[i].y < viewport.y1 && renderArray[i].x > viewport.x0 && renderArray[i].y > viewport.y0){
+        // Item is in the viewport
+        tempRenderArray.push(renderArr[i]);
+      }
+    }
+  
+  
+  
+  
+    // Render everything in the renderArray
+    for(var i = 0; i < tempRenderArray.length; i++){
+      var x = tempRenderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
+      var y = tempRenderArray[i].y - camera.y + canvas.height / 2;
+      eval("ctx.drawImage(" + tempRenderArray[i].texture + ", " + x + ", " + y + ");");
+      
     }
 
     

@@ -177,6 +177,17 @@ async function heartbeat(){
     } catch(e){
 
     }
+  
+    // Draw grid
+    var grid = document.getElementById("snapgrid").checked;
+    if(grid){
+      ctx.fillStyle = "black";
+      // Draw horizontal
+      for(var i = 0; i < (canvas.width / 64); i++){
+        ctx.fillRect(i*64 - camera.x, camera.y, 1, canvas.height);
+      }
+    }
+  
 
 
 
@@ -184,6 +195,7 @@ async function heartbeat(){
     heartbeat(); // Run heartbeat again
 
 }
+document.getElementById("snapgrid").checked = true;
 
 // Sleep function, stolen from Overstacked
 function sleep(ms) {
