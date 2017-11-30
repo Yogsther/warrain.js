@@ -2,31 +2,27 @@
 
 // !!! Update textures array when new textures are added! (copy paste)
 
-var textures = [{
-  name: "player_test",
-  src: "spr/player_def_test.png"
-}, {
-  name: "tree_test",
-  src: "spr/tree_test.png"
-}, {
-  name: "waypoint",
-  src: "spr/waypoint.png"
-}, {
-  name: "bush",
-  src: "spr/bush.png"
-}];
+
 
 // Setup canvas
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
+/* Remove antialiasing when upscaling images. */
+ctx.imageSmoothingEnabled = false; // Standard
+ctx.mozImageSmoothingEnabled = false; // Firefox
+
+// Set height and width for canvas
 canvas.width = 800;
 canvas.height = 500;
 
 
 
-var map = mapRaw;
-loadTextures();
+var map = mapRaw; // Import map
+var textures = texturesRaw; // Import textures
+
+
+loadTextures(); // Add texture variables
 
 function loadTextures(){
     for(var i = 0; i < textures.length; i++){
@@ -38,9 +34,27 @@ function loadTextures(){
     }
 }
 
-
+var lastMousePos = {
+  x: 0,
+  y: 0
+};
  canvas.addEventListener("mousemove", function(event){
     mousePos = getMousePos(canvas, event); // Update mousePos every time the mouse moves.
+    if(grid){
+      while(Math.round(mousePos.x + camera.x - canvas.width / 2) % 64){
+        mousePos.x += 1;
+      }
+      while(Math.round(mousePos.y + camera.y - canvas.height / 2) % 64){
+        mousePos.y += 1;
+      }
+    }
+
+    // Right click down
+    if(mousedown){
+      camera.x += lastMousePos.x - mousePos.x;
+      camera.y += lastMousePos.y - mousePos.y;
+    }
+    lastMousePos = mousePos;
     document.getElementById("coordinates").innerHTML = "x: " + Math.round(mousePos.x + camera.x - canvas.width / 2) + " y: " + Math.round(mousePos.y + camera.y - canvas.height / 2);
 });
 
@@ -56,14 +70,15 @@ function getMousePos(canvas, evt) {
 
 canvas.addEventListener("click", function(event){
     map.push({
-        x: Math.round(mousePos.x + camera.x - canvas.width / 2),
-        y: Math.round(mousePos.y + camera.y - canvas.height / 2),
+        x: Math.round(mousePos.x + camera.x - canvas.width / 2 - eval(currentTexture).width/2),
+        y: Math.round(mousePos.y + camera.y - canvas.height / 2 - eval(currentTexture).height/2),
         texture: currentTexture
     });
 
     loadMapIndex();
 });
 
+loadMapIndex();
 function loadMapIndex(){
     document.getElementById("dropbox").innerHTML = "";
     for(var i = map.length - 1; i > -1; i -= 1){
@@ -124,6 +139,25 @@ function inputHandler(){
   });
 }
 
+var mousedown = false;
+
+$("#canvas").mouseup(function(e){
+    if( e.button == 2 ) {
+      mousedown = false;
+      canvas.style.cursor = "pointer";
+    }
+  });
+  $("#canvas").mousedown(function(e){
+      if( e.button == 2 ) {
+      mousedown = true;
+      canvas.style.cursor = "move";
+      }
+    });
+
+  $('#canvas').bind('contextmenu', function(e){
+    return false;
+});
+var grid;
 async function heartbeat(){
 
     // Clear render renderArray
@@ -173,21 +207,25 @@ async function heartbeat(){
     try{
     // Cursor or Active item
     ctx.globalAlpha = 0.5;
-    ctx.drawImage(eval(currentTexture), mousePos.x, mousePos.y);
+    ctx.drawImage(eval(currentTexture), mousePos.x - eval(currentTexture).width/2, mousePos.y - eval(currentTexture).height/2);
     } catch(e){
 
     }
-  
+
     // Draw grid
-    var grid = document.getElementById("snapgrid").checked;
+    grid = document.getElementById("snapgrid").checked;
     if(grid){
-      ctx.fillStyle = "black";
-      // Draw horizontal
-      for(var i = 0; i < (canvas.width / 64); i++){
-        ctx.fillRect(i*64 - camera.x, camera.y, 1, canvas.height);
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      // Draw horizontal 1000 lines
+      // Title size 32x32 - upscaled to 64x64
+      for(var i = -1000; i < 1000; i++){
+        ctx.fillRect(i*64 + 47 - camera.x, 0, 1, 1000);
       }
-    }
-  
+      for(var i = -1000; i < 1000; i++){
+        ctx.fillRect(0, i*64 - 39 - camera.y, 1000, 1);
+      }
+    }+
+
 
 
 

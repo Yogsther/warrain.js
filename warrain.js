@@ -14,14 +14,16 @@
   { x: 0,
     y: 0,
     texture: texture_name,
-    type: "player", "npc", "background", "object" or "block"
+    type: "player", "npc", "background", "ui",  "object" or "block"
   }
-    
+
     player: player controlled by a human
     npc: monster or friendly characters scattered around the world.
     background: will render in the background, pure texture.
     object: something that the player can walk behind, example a tree. No collision
     block: full collision, players cant walk across it.
+    ui: User interface - This will be static and not effected by the camera. Always rendered ontop.
+    ?effected ui: for damage visuals and player name tags, ui that renderes ontop but is effected by the camera position.
 */
 
 // Setup canvas
@@ -44,19 +46,7 @@ var keysDown = []; // In this array, all the keycodes to the keys currently pres
 /*
 Store all textures in this array as objects.y
 */
-var textures = [{
-  name: "player_test",
-  src: "spr/player_def_test.png"
-}, {
-  name: "tree_test",
-  src: "spr/tree_test.png"
-}, {
-  name: "waypoint",
-  src: "spr/waypoint.png"
-}, {
-  name: "bush",
-  src: "spr/bush.png"
-}];
+var textures = texturesRaw;
 
 window.onload = new function(){
   // Run onload
@@ -162,17 +152,17 @@ function addWaypoint(x, y){
 
 // This function is to define what to do when keys are pressed and what to do.
 function inputAction(){
-    
-  
+
+
   document.getElementById("coordinates_index").innerHTML = "x: " + Math.round(player_x) + " y: " + Math.round(player_y); //Draw coordiantes
-  
+
 
   // TODO Remove or Tweak thsese. Since walking with keys is faster and unbalanced!
   if(keysDown.indexOf(87) != -1) player_y += -player_speed; // W
   if(keysDown.indexOf(83) != -1) player_y += player_speed; // S
   if(keysDown.indexOf(65) != -1) player_x += -player_speed; // A
   if(keysDown.indexOf(68) != -1) player_x += player_speed; // D
-  
+
   var cameraSpeed = 2;
   var cameraLimit_x = 150;
   var cameraLimit_y = 80;
@@ -237,16 +227,16 @@ connected to the server and is essential!
 */
 
 function heartbeat(){
-    
+
     // Clear render renderArray
     renderArray = [];
     inputAction();
-    
+
     viewport = {
         x0: camera.x + canvas.width / 2 - canvas.width - 100,
         x1: camera.x + canvas.width / 2 + 100,
         y0: camera.y + canvas.height / 2 - canvas.height - 100,
-        y1: camera.y + canvas.height / 2 + 100 
+        y1: camera.y + canvas.height / 2 + 100
     };
 
     /*
@@ -280,14 +270,14 @@ function heartbeat(){
       });
     }
 
-    
+
 
     /* Render part
     Clear canvas for new rendered
     */
     ctx.fillStyle = "#48bf52"; // TODO may want to change this color.
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
 
     // Save the map that is visible in the viewport.
     var tempRenderArray = [];
@@ -306,21 +296,21 @@ function heartbeat(){
         tempRenderArray.push(renderArr[i]);
       }
     }
-  
-  
-  
-  
+
+
+
+
     // Render everything in the renderArray
     for(var i = 0; i < tempRenderArray.length; i++){
       var x = tempRenderArray[i].x - camera.x + canvas.width / 2; // + canvas.width is to center the player in the middle of the screen.
       var y = tempRenderArray[i].y - camera.y + canvas.height / 2;
       eval("ctx.drawImage(" + tempRenderArray[i].texture + ", " + x + ", " + y + ");");
-      
+
     }
 
-    
+
     fps++; // Increese fps counter
-    
+
     var now = Date.now(); // Current time in millis
     if((now - lastFpsCheck) > 1000){
         // Check the fps every second
@@ -328,7 +318,7 @@ function heartbeat(){
         lastFpsCheck = now; // Log last time checked
         fps = 0; // Reset fps
     }
-    
-    
+
+
     requestAnimationFrame(heartbeat); // Run this 60 times a second.
 }

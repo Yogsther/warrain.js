@@ -6,23 +6,24 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script src="jq.js" type="text/javascript"></script> <!-- import jquery -->
-      <script src="map.js"></script> <!-- Import map (passive) -->
+    <script src="map.js"></script> <!-- Import map (passive) -->
+    <script src="textures.js"></script> <!-- Import textures (passive) -->  
       <!-- Todo socket.io -->
   </head>
   <body>
 
     <!-- Main canvas and Game -->
     <canvas id="canvas"></canvas>
-    
-    
-    <!-- Debug -->  
+
+
+    <!-- Debug -->
     <div id="debug_div">
     <button onclick="window.location.href='leveleditor.html'" id="debug_button">Debug: Level editor</button>
         <span id="fps" style="color: white;">? fps</span> <span id="coordinates_index" style="color:white; float:right;">x: 0 y: 0</span>
     </div>
-      
+
     <!-- Main game script -->
     <script src="warrain.js"></script>
-      
+
   </body>
 </html>
